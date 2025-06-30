@@ -1,0 +1,7 @@
+<nos3-mission-cfg>
+  <start-time>814048200.0</start-time>
+  <gsw>cosmos</gsw>
+  <fsw>cfs</fsw>
+  <number-spacecraft>1</number-spacecraft>
+  <sc-1-cfg>spacecraft/sc-minimal-config.xml</sc-1-cfg>
+</nos3-mission-cfg>
