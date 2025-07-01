@@ -6,11 +6,13 @@ SHELL := /bin/bash
 # Executable definitions docker|podman etc.
 CONTAINER_BIN =docker
 
+GIT_BRANCH=$(shell git branch --show-current)
+
 # Target tags for pushing to
 REGISTRY_HOST=ghcr.io
 IMAGE_USERNAME=haisamido
 IMAGE_NAME=nos3-base
-IMAGE_TAG=dev
+IMAGE_TAG=${GIT_BRANCH}
 
 IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 
@@ -18,6 +20,9 @@ IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 DOCKERFILE=Dockerfile
 
 GIT_TOKEN=${HOME}/.github.com/access_token
+
+nos3-base-pull-prebuilt: ## pull pre-built nos3-base from remote
+	${CONTAINER_BIN} pull ${IMAGE_URI}
 
 nos3-base-build: ## build nos3-base from nos3-64 (Look at Dockerfile)
 	$(call print_message,33,Building ${IMAGE_URI} via ${CONTAINER_BIN} ...)
