@@ -37,6 +37,11 @@ RUN git clone --recurse-submodules -b ${GIT_BRANCH} -j2 ${GIT_URL}
 
 WORKDIR /builds/nos3
 
+# TODO: need to enhance this capability where they don't affect compilation
+COPY ./assets/cfg/nos3-mission.xml        ./cfg/nos3-mission.xml
+COPY ./assets/cfg/spacecraft              ./cfg/spacecraft
+COPY ./assets/cfg/sims/nos3-simulator.xml ./cfg/sims/nos3-simulator.xml
+
 RUN make -j7 clean
 RUN make -j7 config
 
