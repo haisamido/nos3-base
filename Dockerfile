@@ -35,6 +35,7 @@ RUN apt-get update && \
 RUN useradd -m ${NOS3_USER}
 
 RUN adduser ${NOS3_USER} sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Switch to the newly created user
 USER ${NOS3_USER}
