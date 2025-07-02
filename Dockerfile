@@ -8,6 +8,8 @@ ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 ARG GIT_URL=https://github.com/nasa/nos3
 ARG GIT_BRANCH=dev
 
+ARG NOS3_USER=nos3
+
 #------------------------------------------------------------------------------
 FROM ${IMAGE_URI} AS nos3-64
 #------------------------------------------------------------------------------
@@ -16,10 +18,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 #---
 ARG GIT_URL
 ARG GIT_BRANCH
+ARG NOS3_USER
 
 ENV GIT_URL=${GIT_URL}
 ENV GIT_BRANCH=${GIT_BRANCH}
-#---
+ENV NOS3_USER=${NOS3_USER}
 
 RUN apt-get update && \
   apt-get install -y sudo git curl vim make cmake tmux tree python3 pip && \
@@ -28,14 +31,24 @@ RUN apt-get update && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /builds/
+# Create a new user named ${NOS3_USER} with a home directory
+RUN useradd -m ${NOS3_USER}
 
-WORKDIR /builds/
+RUN adduser ${NOS3_USER} sudo
 
-# TODO: in gitlab cannot auto-mirror all the recursed submodules :-( https://github.com/nasa/nos3.git
+# Switch to the newly created user
+USER ${NOS3_USER}
+
+# Create builds directory
+RUN mkdir -p /home/${NOS3_USER}/builds/
+
+WORKDIR /home/${NOS3_USER}/builds/
+
 RUN git clone --recurse-submodules -b ${GIT_BRANCH} -j2 ${GIT_URL}
 
-WORKDIR /builds/nos3
+WORKDIR /home/${NOS3_USER}/builds/nos3
+
+RUN chown -R ${NOS3_USER}:${NOS3_USER} /home/${NOS3_USER}
 
 # TODO: need to enhance this capability where they don't affect compilation
 COPY ./assets/cfg/nos3-mission.xml        ./cfg/nos3-mission.xml
