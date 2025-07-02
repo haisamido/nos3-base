@@ -9,21 +9,28 @@ ARG GIT_URL=https://github.com/nasa/nos3
 ARG GIT_BRANCH=dev
 
 ARG NOS3_USER=nos3
+ARG FLIGHT_SOFTWARE=cfs 
 
 #------------------------------------------------------------------------------
-FROM ${IMAGE_URI} AS nos3-64
+FROM ${IMAGE_URI} AS nos3-base
 #------------------------------------------------------------------------------
 ARG DEBIAN_FRONTEND=noninteractive
 
-#---
+# Git Configs
 ARG GIT_URL
 ARG GIT_BRANCH
-ARG NOS3_USER
 
 ENV GIT_URL=${GIT_URL}
 ENV GIT_BRANCH=${GIT_BRANCH}
-ENV NOS3_USER=${NOS3_USER}
 
+# NOS3 Configs
+ARG FLIGHT_SOFTWARE 
+ARG NOS3_USER
+
+ENV NOS3_USER=${NOS3_USER}
+ENV FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE}
+
+#
 RUN apt-get update && \
   apt-get install -y sudo git curl vim make cmake tmux tree python3 pip && \
   apt-get install -y iputils-ping dnsutils lsof net-tools tshark jq && \
@@ -57,6 +64,7 @@ COPY ./assets/cfg/spacecraft              ./cfg/spacecraft
 COPY ./assets/cfg/sims/nos3-simulator.xml ./cfg/sims/nos3-simulator.xml
 
 RUN make -j7 clean
+RUN make -j7 prep
 RUN make -j7 config
 
 RUN make -j7 build-cryptolib
