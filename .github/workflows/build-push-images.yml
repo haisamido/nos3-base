@@ -13,6 +13,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+        # from https://github.com/orgs/community/discussions/25678#discussioncomment-5242449 
+      
       - uses: actions/checkout@v4
 
       - name: Login to the Container Registry
