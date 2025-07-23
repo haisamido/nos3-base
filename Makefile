@@ -27,7 +27,7 @@ nos3-base-pull-prebuilt: ## pull pre-built nos3-base from remote
 nos3-base-build: ## build nos3-base from nos3-64 (Look at Dockerfile)
 	$(call print_message,33,Building ${IMAGE_URI} via ${CONTAINER_BIN} ...)
 	${CONTAINER_BIN} build \
-		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
+		--build-arg MAVEN_HTTPS_PROXY="${MAVEN_HTTPS_PROXY}" \
 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
