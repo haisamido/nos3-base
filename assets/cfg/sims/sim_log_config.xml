@@ -16,7 +16,7 @@
    </log:target>
    -->
    <log:target id="file" format="%t [%l] - %s" impl="file">   
-      <log:arg key="filename" value="nos3-sim-log.txt" />
+      <log:arg key="filename" value="nos3-sim.log" />
       <log:arg key="rollover" value="true" />
       <log:arg key="overwrite" value="true" />
    </log:target>
