@@ -59,7 +59,7 @@ ENV GSW_SOFTWARE=${GSW_SOFTWARE}
 #------------------------------------------------------------------------------
 RUN apt-get update && \
   apt-get install -y sudo git curl vim make cmake tmux tree python3 pip && \
-  apt-get install -y iputils-ping dnsutils lsof net-tools tshark jq && \
+  apt-get install -y iputils-ping dnsutils lsof net-tools tshark jq nmap && \
   apt-get install -y libgcrypt20-dev && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
