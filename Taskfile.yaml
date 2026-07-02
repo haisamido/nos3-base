@@ -1,0 +1,62 @@
+version: '3'
+
+vars:
+  CONTAINER_BIN: docker
+  GIT_BRANCH:
+    sh: git branch --show-current
+  REGISTRY_HOST: ghcr.io
+  IMAGE_USERNAME: haisamido
+  IMAGE_NAME: nos3-base-local
+  IMAGE_TAG: "{{.GIT_BRANCH}}"
+  BASE_IMAGE_TAG: "20260619"
+  IMAGE_URI: "{{.REGISTRY_HOST}}/{{.IMAGE_USERNAME}}/{{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
+  DOCKERFILE: Dockerfile
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  nos3-base-pull-prebuilt:
+    desc: Pull pre-built nos3-base from remote
+    cmds:
+      - "{{.CONTAINER_BIN}} pull {{.IMAGE_URI}}"
+
+  nos3-base-build:
+    desc: Build nos3-base from nos3-64 (Look at Dockerfile)
+    cmds:
+      - printf "\033[33mBuilding {{.IMAGE_URI}} via {{.CONTAINER_BIN}} ...\033[0m\n"
+      - |
+        {{.CONTAINER_BIN}} build \
+          --build-arg IMAGE_TAG={{.BASE_IMAGE_TAG}} \
+          --build-arg MAVEN_HTTPS_PROXY="${MAVEN_HTTPS_PROXY}" \
+          --build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+          --build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+          --build-arg HTTP_PROXY=${HTTP_PROXY} \
+          --build-arg NO_PROXY=${NO_PROXY} \
+          --file {{.DOCKERFILE}} \
+          -t {{.IMAGE_URI}} .
+
+  nos3-base-push:
+    desc: Push nos3-base (registry-login and build run first)
+    deps: [registry-login, nos3-base-build]
+    cmds:
+      - printf "\033[33mPushing {{.IMAGE_URI}} via {{.CONTAINER_BIN}} ...\033[0m\n"
+      - "{{.CONTAINER_BIN}} push {{.IMAGE_URI}}"
+
+  registry-login:
+    desc: Image registry login
+    cmds:
+      - printf "\033[33mLogging into {{.REGISTRY_HOST}} via {{.CONTAINER_BIN}} login ...\033[0m\n"
+      - "cat $HOME/.github.com/access_token | {{.CONTAINER_BIN}} login {{.REGISTRY_HOST}} -u {{.IMAGE_USERNAME}} --password-stdin"
+
+  act:
+    desc: "Run build job locally via act (alias: act-build)"
+    aliases: [act-build]
+    vars:
+      VERBOSE: '{{default "1" .VERBOSE}}'
+    cmds:
+      - printf "\033[33mRunning build job locally via act ...\033[0m\n"
+      - act push -j build {{if .VERBOSE}}-v{{end}} --privileged --container-daemon-socket /var/run/docker.sock {{.CLI_ARGS}}

@@ -1,13 +1,14 @@
-ARG REGISTRY_HOST=ghcr.io
-ARG IMAGE_USERNAME=haisamido
+ARG REGISTRY_HOST=docker.io
+ARG IMAGE_USERNAME=ivvitc
 ARG IMAGE_NAME=nos3-64
-ARG IMAGE_TAG=dev
+ARG IMAGE_TAG=20260619
+
 ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 ARG GIT_URL=https://github.com/nasa/nos3
-ARG GIT_BRANCH=dev
+ARG GIT_BRANCH=main
 
 ARG NOS3_USER=nos3
 ARG FLIGHT_SOFTWARE=cfs 
